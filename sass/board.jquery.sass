@@ -1,7 +1,21 @@
-ul
+ul.board-wrapper
   display: table
   margin: 0
   padding: 0
+  width: 100%
   li
     list-style-type: none
-    display: table-cell
+    &.board-column
+      border: 0.1em solid #ddd
+      display: table-cell
+    div.column-title
+      background-color: #cccccc
+      padding: 0.5em
+    ul
+      margin: 0
+      padding: 0
+      li.board-row
+        padding: 0.5em
+        background-color: #eeeeee
+        + li.board-row
+          border-top: 0.1em solid #dddddd
