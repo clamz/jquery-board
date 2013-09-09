@@ -3,8 +3,7 @@
     $.widget("clamz.board", {
       options: {
         items: "items",
-        layoutRows: "<ul>{{#each rows }}<li>{{name}}</li>{{/each}}</ul>",
-        layoutColumns: "<ul>{{#each columns }}<li>{{name}}((((rowstemplate))))</li>{{/each}}</ul>",
+        templateString: '<ul class="board-wrapper">{{#each columns }}<li class="board-column"><div class="column-title">{{name}}</div><ul>{{#each rows }}<li class="board-row">{{name}}</li>{{/each}}</ul></li>{{/each}}</ul>',
         json: {
           columns: [
             {
@@ -32,13 +31,11 @@
         }
       },
       _create: function() {
-        var element, json, layoutColumns, layoutRows, template;
+        var element, json, template, templateString;
         element = this.element;
-        layoutColumns = this.options.layoutColumns;
-        layoutRows = this.options.layoutRows;
+        templateString = this.options.templateString;
         json = this.options.json;
-        layoutColumns = layoutColumns.replace("((((rowstemplate))))", layoutRows);
-        template = Handlebars.compile(layoutColumns);
+        template = Handlebars.compile(templateString);
         return element.html(template(json));
       }
     });

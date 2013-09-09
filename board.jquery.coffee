@@ -2,8 +2,7 @@ $ ->
   $.widget "clamz.board",
     options:
       items: "items"
-      layoutRows: "<ul>{{#each rows }}<li>{{name}}</li>{{/each}}</ul>"
-      layoutColumns: "<ul>{{#each columns }}<li>{{name}}((((rowstemplate))))</li>{{/each}}</ul>"
+      templateString: '<ul class="board-wrapper">{{#each columns }}<li class="board-column">{{name}}<ul>{{#each rows }}<li class="board-row">{{name}}</li>{{/each}}</ul></li>{{/each}}</ul>'
       json: columns: [
           name: "test"
           rows: [
@@ -22,14 +21,11 @@ $ ->
           ]
         ]
     _create: ->
-      element       = @element
-      layoutColumns = @options.layoutColumns
-      layoutRows    = @options.layoutRows
-      json          = @options.json
-
-     
-      layoutColumns = layoutColumns.replace("((((rowstemplate))))", layoutRows)
-      template = Handlebars.compile layoutColumns
+      element         = @element
+      templateString  = @options.templateString
+      json            = @options.json     
+      
+      template = Handlebars.compile templateString
       element.html template json
 
   $("#board-container").board()
