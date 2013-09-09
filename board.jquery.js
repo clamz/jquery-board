@@ -1,4 +1,5 @@
-$(function() {
+(function() {
+  $(function() {
     $.widget("clamz.board", {
       options: {
         items: "items",
@@ -43,3 +44,5 @@ $(function() {
     });
     return $("#board-container").board();
   });
+
+}).call(this);
