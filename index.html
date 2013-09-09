@@ -10,6 +10,30 @@
 <div id="board-container">
 
 </div>
+<script id="rows-template" type="text/x-handlebars-template">
+  	<ul>
+		{{#each rows }}
+			<li class="board-row">{{name}}</li>
+		{{/each}}
+	</ul>
+</script>
+<script id="columns-template" type="text/x-handlebars-template">
+  <ul class="board-wrapper">
+  	{{#each columns }}
+  		<li class="board-column">
+  			<div class="column-title">{{name}}</div>
+			{{#if columns}}
+				{{> columns}}
+			{{/if}}
+			{{#if rows}}
+				{{> rows}}
+			{{/if}}
+		</li>
+  	{{/each}}
+  </ul>
+</script>
+
+
 <script type="text/javascript" src="bower_components/jquery/jquery.min.js"></script>
 <script type="text/javascript" src="bower_components/handlebars/handlebars.js"></script>
 <script type="text/javascript" src="include/js/jquery-ui.custom.min.js"></script>

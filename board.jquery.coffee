@@ -1,8 +1,7 @@
 $ ->
   $.widget "clamz.board",
     options:
-      items: "items"
-      templateString: '<ul class="board-wrapper">{{#each columns }}<li class="board-column">{{name}}<ul>{{#each rows }}<li class="board-row">{{name}}</li>{{/each}}</ul></li>{{/each}}</ul>'
+      templateColumnsId: 'columns-template'
       json: columns: [
           name: "test"
           rows: [
@@ -12,8 +11,13 @@ $ ->
           ]
         ,
           name: "test2"
-          rows: [
+          columns: [
             name: "row2-1"
+            rows: [
+                name: "test"
+              ,
+                name: "test2"
+            ]
           ,
             name: "row2-2"
           ,
@@ -21,11 +25,24 @@ $ ->
           ]
         ]
     _create: ->
-      element         = @element
-      templateString  = @options.templateString
-      json            = @options.json     
-      
-      template = Handlebars.compile templateString
-      element.html template json
+      @_compileTemplate()
 
+    # compile template
+    # and display the result
+    _compileTemplate: ->
+      element         = @element
+      templateColumnsId  = @options.templateColumnsId
+      json            = @options.json      
+      template        = Handlebars.compile $("#"+templateColumnsId).html()
+      @_registerPartials()
+      result          = template json
+
+      # display the result
+      element.html result
+      @_trigger "templateCompiled", element, json, result
+
+    _registerPartials: ->
+      Handlebars.compile $("#rows-template").html();
+      Handlebars.registerPartial "rows", $("#rows-template").html();
+      Handlebars.registerPartial("columns", $("#columns-template").html());
   $("#board-container").board()

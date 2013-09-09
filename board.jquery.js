@@ -2,8 +2,7 @@
   $(function() {
     $.widget("clamz.board", {
       options: {
-        items: "items",
-        templateString: '<ul class="board-wrapper">{{#each columns }}<li class="board-column"><div class="column-title">{{name}}</div><ul>{{#each rows }}<li class="board-row">{{name}}</li>{{/each}}</ul></li>{{/each}}</ul>',
+        templateColumnsId: 'columns-template',
         json: {
           columns: [
             {
@@ -17,9 +16,16 @@
               ]
             }, {
               name: "test2",
-              rows: [
+              columns: [
                 {
-                  name: "row2-1"
+                  name: "row2-1",
+                  rows: [
+                    {
+                      name: "test"
+                    }, {
+                      name: "test2"
+                    }
+                  ]
                 }, {
                   name: "row2-2"
                 }, {
@@ -31,12 +37,23 @@
         }
       },
       _create: function() {
-        var element, json, template, templateString;
+        return this._compileTemplate();
+      },
+      _compileTemplate: function() {
+        var element, json, result, template, templateColumnsId;
         element = this.element;
-        templateString = this.options.templateString;
+        templateColumnsId = this.options.templateColumnsId;
         json = this.options.json;
-        template = Handlebars.compile(templateString);
-        return element.html(template(json));
+        template = Handlebars.compile($("#" + templateColumnsId).html());
+        this._registerPartials();
+        result = template(json);
+        element.html(result);
+        return this._trigger("templateCompiled", element, json, result);
+      },
+      _registerPartials: function() {
+        Handlebars.compile($("#rows-template").html());
+        Handlebars.registerPartial("rows", $("#rows-template").html());
+        return Handlebars.registerPartial("columns", $("#columns-template").html());
       }
     });
     return $("#board-container").board();
