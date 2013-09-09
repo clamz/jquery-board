@@ -1,0 +1,22 @@
+{
+  "name": "jquery-board",
+  "version": "0.0.1",
+  "dependencies": {
+    "jquery": "~1.10.2",
+    "handlebars": "~1.0.0"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "homepage": "https://github.com/clamz/jquery-board",
+  "authors": [
+    "Damien GUEZOU"
+  ],
+  "license": "MIT",
+  "private": true
+}
