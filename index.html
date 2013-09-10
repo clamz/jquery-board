@@ -11,7 +11,7 @@
 
 </div>
 <script id="rows-template" type="text/x-handlebars-template">
-  	<ul>
+  	<ul class="rows-wrapper">
 		{{#each rows }}
 			<li class="board-row">{{name}}</li>
 		{{/each}}
@@ -28,6 +28,12 @@
 			{{#if rows}}
 				{{> rows}}
 			{{/if}}
+			{{#unless rows }}
+				{{#unless columns }}
+					<ul class="rows-wrapper">
+					</ul>
+				{{/unless}}
+			{{/unless}}
 		</li>
   	{{/each}}
   </ul>
@@ -38,5 +44,6 @@
 <script type="text/javascript" src="bower_components/handlebars/handlebars.js"></script>
 <script type="text/javascript" src="include/js/jquery-ui.custom.min.js"></script>
 <script type="text/javascript" src="board.jquery.js"></script>
+<script type="text/javascript">$(function() {$("#board-container").board();})</script>
 </body>
 </html>

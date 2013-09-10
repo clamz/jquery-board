@@ -1,7 +1,11 @@
 $ ->
   $.widget "clamz.board",
     options:
-      templateColumnsId: 'columns-template'
+      templateColumnsId:  'columns-template'
+      columnsClass:       'board-column'
+      rowsClass:          'board-row'
+      rowsWrapper:        'rows-wrapper'
+      rowsTemplateId:     'rows-template'
       json: columns: [
           name: "test"
           rows: [
@@ -26,23 +30,33 @@ $ ->
         ]
     _create: ->
       @_compileTemplate()
+      @_setupDnd()
 
     # compile template
     # and display the result
     _compileTemplate: ->
-      element         = @element
-      templateColumnsId  = @options.templateColumnsId
-      json            = @options.json      
-      template        = Handlebars.compile $("#"+templateColumnsId).html()
+      element             = @element
+      templateColumnsId   = @options.templateColumnsId
+      json                = @options.json
+      template            = Handlebars.compile $("#"+templateColumnsId).html()
       @_registerPartials()
-      result          = template json
+      result              = template json
 
       # display the result
       element.html result
       @_trigger "templateCompiled", element, json, result
 
     _registerPartials: ->
-      Handlebars.compile $("#rows-template").html();
-      Handlebars.registerPartial "rows", $("#rows-template").html();
-      Handlebars.registerPartial("columns", $("#columns-template").html());
-  $("#board-container").board()
+      templateColumnsId   = @options.templateColumnsId
+      rowsTemplateId      = @options.rowsTemplateId
+      Handlebars.compile $("#"+rowsTemplateId).html();
+      Handlebars.registerPartial "rows", $("#"+rowsTemplateId).html();
+      Handlebars.registerPartial("columns", $("#"+templateColumnsId).html());
+    
+    _setupDnd: ->
+      rowsWrapper = @options.rowsWrapper
+      $('.'+rowsWrapper).sortable(
+        connectWith:      '.'+rowsWrapper
+        dropOnEmpty:      true
+       
+      ).disableSelection();

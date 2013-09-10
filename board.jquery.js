@@ -1,8 +1,12 @@
 (function() {
   $(function() {
-    $.widget("clamz.board", {
+    return $.widget("clamz.board", {
       options: {
         templateColumnsId: 'columns-template',
+        columnsClass: 'board-column',
+        rowsClass: 'board-row',
+        rowsWrapper: 'rows-wrapper',
+        rowsTemplateId: 'rows-template',
         json: {
           columns: [
             {
@@ -37,7 +41,8 @@
         }
       },
       _create: function() {
-        return this._compileTemplate();
+        this._compileTemplate();
+        return this._setupDnd();
       },
       _compileTemplate: function() {
         var element, json, result, template, templateColumnsId;
@@ -51,12 +56,22 @@
         return this._trigger("templateCompiled", element, json, result);
       },
       _registerPartials: function() {
-        Handlebars.compile($("#rows-template").html());
-        Handlebars.registerPartial("rows", $("#rows-template").html());
-        return Handlebars.registerPartial("columns", $("#columns-template").html());
+        var rowsTemplateId, templateColumnsId;
+        templateColumnsId = this.options.templateColumnsId;
+        rowsTemplateId = this.options.rowsTemplateId;
+        Handlebars.compile($("#" + rowsTemplateId).html());
+        Handlebars.registerPartial("rows", $("#" + rowsTemplateId).html());
+        return Handlebars.registerPartial("columns", $("#" + templateColumnsId).html());
+      },
+      _setupDnd: function() {
+        var rowsWrapper;
+        rowsWrapper = this.options.rowsWrapper;
+        return $('.' + rowsWrapper).sortable({
+          connectWith: '.' + rowsWrapper,
+          dropOnEmpty: true
+        }).disableSelection();
       }
     });
-    return $("#board-container").board();
   });
 
 }).call(this);
