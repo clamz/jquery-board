@@ -91,6 +91,7 @@
         target = $(e.currentTarget);
         boardObj = e.handleObj.data;
         editableClass = boardObj.options.editableClass;
+        target.removeClass('editable');
         target.off('click');
         targetContent = target.html();
         input = $('<input>', {
@@ -98,6 +99,7 @@
           value: targetContent
         });
         target.html(input);
+        input.focus();
         okButton = $('<span>', {
           "class": 'ok',
           text: 'Ok'

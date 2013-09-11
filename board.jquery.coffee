@@ -79,7 +79,7 @@ $ ->
       target          = $(e.currentTarget)
       boardObj = e.handleObj.data
       editableClass = boardObj.options.editableClass
-      
+      target.removeClass('editable')
       # remove the click event
       target.off('click')
       
@@ -91,7 +91,7 @@ $ ->
       )
 
       target.html(input)
-
+      input.focus()
       #Create ok and cancel buttons
       okButton = $('<span>',
         class: 'ok'
