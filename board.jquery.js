@@ -66,7 +66,7 @@
         Handlebars.compile($("#" + rowsTemplateId).html());
         Handlebars.registerPartial("rows", $("#" + rowsTemplateId).html());
         Handlebars.compile($("#" + cellTemplateId).html());
-        Handlebars.registerPartial("rows", $("#" + cellTemplateId).html());
+        Handlebars.registerPartial("cell", $("#" + cellTemplateId).html());
         return Handlebars.registerPartial("columns", $("#" + templateColumnsId).html());
       },
       _setupDnd: function() {
