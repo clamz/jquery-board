@@ -128,17 +128,20 @@
         oldValue = $(this).data('oldValue');
         boardObj = e.handleObj.data.boardObj;
         editableElt.html(oldValue);
-        return editableElt.click(boardObj, boardObj._onEdit);
+        editableElt.click(boardObj, boardObj._onEdit);
+        return boardObj._trigger("editCanceled", e, oldValue);
       },
       _onOkEdit: function(e) {
-        var boardObj, editableElt, inputElt;
+        var boardObj, editableElt, inputElt, newValue;
         e.preventDefault();
         e.stopPropagation();
         editableElt = e.handleObj.data.target;
         inputElt = e.handleObj.data.input;
         boardObj = e.handleObj.data.boardObj;
-        editableElt.html($(inputElt).val());
-        return editableElt.click(boardObj, boardObj._onEdit);
+        newValue = $(inputElt).val();
+        editableElt.html(newValue);
+        editableElt.click(boardObj, boardObj._onEdit);
+        return boardObj._trigger("editValidated", e, newValue);
       }
     });
   });

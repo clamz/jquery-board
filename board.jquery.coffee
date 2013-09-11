@@ -131,6 +131,7 @@ $ ->
 
       editableElt.html(oldValue)
       editableElt.click(boardObj,boardObj._onEdit)
+      boardObj._trigger( "editCanceled", e, oldValue )
 
      _onOkEdit: (e) ->
       e.preventDefault()
@@ -138,7 +139,9 @@ $ ->
       editableElt     = e.handleObj.data.target
       inputElt        = e.handleObj.data.input
       boardObj        = e.handleObj.data.boardObj
+      newValue        = $(inputElt).val()
 
-      editableElt.html($(inputElt).val())      
+      editableElt.html(newValue)      
       editableElt.click(boardObj,boardObj._onEdit)
+      boardObj._trigger( "editValidated", e, newValue )
       
