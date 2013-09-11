@@ -49,6 +49,7 @@ $ ->
       element.html result
       @_trigger "templateCompiled", element, json, result
 
+    # Register handlebars partials
     _registerPartials: ->
       templateColumnsId   = @options.templateColumnsId
       rowsTemplateId      = @options.rowsTemplateId
@@ -59,6 +60,7 @@ $ ->
       Handlebars.registerPartial "rows", $("#"+cellTemplateId).html();
       Handlebars.registerPartial("columns", $("#"+templateColumnsId).html());
     
+    # setup the drag and drop feature on rows
     _setupDnd: ->
       rowsWrapper = @options.rowsWrapper
       $('.'+rowsWrapper).sortable(
@@ -67,11 +69,14 @@ $ ->
        
       ).disableSelection();
 
+    # the elements with "editable" class name can be editable
     _setupContentsEditable: ->
       editableClass = @options.editableClass
       editableElt   = $('.'+editableClass)
       editableElt.click(this,@_onEdit)        
 
+    # on edit element editable
+    # replace the text by an input text
     _onEdit: (e) ->
       e.preventDefault()
       e.stopPropagation()
@@ -122,6 +127,7 @@ $ ->
         boardObj._onCancelEdit
       )
 
+    # Called when the edit was canceled
     _onCancelEdit: (e) ->
       e.preventDefault()
       e.stopPropagation()
@@ -133,6 +139,7 @@ $ ->
       editableElt.click(boardObj,boardObj._onEdit)
       boardObj._trigger( "editCanceled", e, oldValue )
 
+    # Called when the edit was validated
      _onOkEdit: (e) ->
       e.preventDefault()
       e.stopPropagation()
