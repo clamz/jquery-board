@@ -5,7 +5,9 @@ $ ->
       columnsClass:       'board-column'
       rowsClass:          'board-row'
       rowsWrapper:        'rows-wrapper'
+      editableClass:      'editable'
       rowsTemplateId:     'rows-template'
+      cellTemplateId:     'cell-template'
       json: columns: [
           name: "test"
           rows: [
@@ -31,6 +33,7 @@ $ ->
     _create: ->
       @_compileTemplate()
       @_setupDnd()
+      @_setupContentsEditable()
 
     # compile template
     # and display the result
@@ -49,8 +52,11 @@ $ ->
     _registerPartials: ->
       templateColumnsId   = @options.templateColumnsId
       rowsTemplateId      = @options.rowsTemplateId
+      cellTemplateId      = @options.cellTemplateId
       Handlebars.compile $("#"+rowsTemplateId).html();
       Handlebars.registerPartial "rows", $("#"+rowsTemplateId).html();
+      Handlebars.compile $("#"+cellTemplateId).html();
+      Handlebars.registerPartial "rows", $("#"+cellTemplateId).html();
       Handlebars.registerPartial("columns", $("#"+templateColumnsId).html());
     
     _setupDnd: ->
@@ -60,3 +66,79 @@ $ ->
         dropOnEmpty:      true
        
       ).disableSelection();
+
+    _setupContentsEditable: ->
+      editableClass = @options.editableClass
+      editableElt   = $('.'+editableClass)
+      editableElt.click(this,@_onEdit)        
+
+    _onEdit: (e) ->
+      e.preventDefault()
+      e.stopPropagation()
+      e.stopImmediatePropagation()
+      target          = $(e.currentTarget)
+      boardObj = e.handleObj.data
+      editableClass = boardObj.options.editableClass
+      
+      # remove the click event
+      target.off('click')
+      
+      # set 
+      targetContent   = target.html()
+      input = $('<input>',
+        type: "text"
+        value: targetContent
+      )
+
+      target.html(input)
+
+      #Create ok and cancel buttons
+      okButton = $('<span>',
+        class: 'ok'
+        text: 'Ok'
+      )
+
+      cancelButton = $('<span>',
+        class: 'cancel'
+        text: 'X'
+      ).data('oldValue',targetContent)
+
+      # add the buttons on container
+      target.append(cancelButton)
+      target.append(okButton)
+
+      # add the clicks events on buttons
+      okButton.click(
+         boardObj : boardObj,
+         target: target,
+         input: input
+        ,
+        boardObj._onOkEdit
+      )
+      cancelButton.click(
+         boardObj : boardObj,
+         target: target
+        ,
+        boardObj._onCancelEdit
+      )
+
+    _onCancelEdit: (e) ->
+      e.preventDefault()
+      e.stopPropagation()
+      editableElt     = e.handleObj.data.target
+      oldValue        = $(this).data('oldValue')
+      boardObj        = e.handleObj.data.boardObj
+
+      editableElt.html(oldValue)
+      editableElt.click(boardObj,boardObj._onEdit)
+
+     _onOkEdit: (e) ->
+      e.preventDefault()
+      e.stopPropagation()
+      editableElt     = e.handleObj.data.target
+      inputElt        = e.handleObj.data.input
+      boardObj        = e.handleObj.data.boardObj
+
+      editableElt.html($(inputElt).val())      
+      editableElt.click(boardObj,boardObj._onEdit)
+      
