@@ -1,3 +1,8 @@
+$darkGray: #444444
+$lightGray: #DDDDDD
+$x-lightGray: #FAFAFA
+$s-lightGray: #CCCCCC
+
 ul.board-wrapper
   display: table
   margin: 0
@@ -5,22 +10,27 @@ ul.board-wrapper
   width: 100%
   .editable
     cursor: pointer
+    color: $darkGray
     &:hover
       text-decoration: underline
   span.ok, span.cancel
     cursor: pointer
-    background-color: #DDDDDD
+    background-color: $lightGray
     padding: 0.4em 0.2em
     margin: 0 0 0 0.4em
     font-size: 0.7em
   li
     list-style-type: none
     &.board-column
-      border: 0.1em solid #ddd
+      border: 0.1em solid $lightGray
       display: table-cell
-    div.column-title
-      background-color: #cccccc
+    div.column-title      
       padding: 0.5em
+      background-color: $darkGray
+      color: $s-lightGray
+      font-weight: bold
+      span
+        color: $darkGray
     ul
       &.rows-wrapper
         min-height: 250px
@@ -28,6 +38,6 @@ ul.board-wrapper
       padding: 0
       li.board-row
         padding: 0.5em
-        background-color: #eeeeee
-        + li.board-row
-          border-top: 0.1em solid #dddddd
+        margin: 0.2em
+        background-color: $x-lightGray
+        border: 0.1em solid $lightGray

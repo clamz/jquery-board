@@ -141,6 +141,7 @@
         oldValue = input.data('oldValue');
         editableElt.html(oldValue);
         editableElt.click(boardObj, boardObj._onEdit);
+        editableElt.addClass('editable');
         return boardObj._trigger("editCanceled", editableElt, input, boardObj, oldValue);
       },
       _onOkEdit: function(e) {
@@ -157,6 +158,7 @@
         newValue = $(inputElt).val();
         editableElt.html(newValue);
         editableElt.click(boardObj, boardObj._onEdit);
+        editableElt.addClass('editable');
         return boardObj._trigger("editValidated", editableElt, inputElt, boardObj, newValue);
       }
     });

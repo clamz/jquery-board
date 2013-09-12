@@ -144,6 +144,7 @@ $ ->
       oldValue        = input.data('oldValue')
       editableElt.html(oldValue)
       editableElt.click(boardObj,boardObj._onEdit)
+      editableElt.addClass('editable')
       boardObj._trigger( "editCanceled", editableElt, input, boardObj, oldValue )
 
     # Called when the edit was validated
@@ -159,5 +160,6 @@ $ ->
       newValue        = $(inputElt).val()
       editableElt.html(newValue)      
       editableElt.click(boardObj,boardObj._onEdit)
+      editableElt.addClass('editable')
       boardObj._trigger( "editValidated", editableElt, inputElt, boardObj, newValue )
       
