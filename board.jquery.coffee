@@ -96,7 +96,7 @@ $ ->
       ).data('oldValue',targetContent)
 
       target.html(input)
-      input.focus()
+      input.focus().select()
       input.keyup (e) ->
         boardObj.okEdit(target, input, boardObj) if e.which == 13
         boardObj.cancelEdit(target, input, boardObj) if e.which == 27

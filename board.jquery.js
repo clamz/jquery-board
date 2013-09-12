@@ -99,7 +99,7 @@
           value: targetContent
         }).data('oldValue', targetContent);
         target.html(input);
-        input.focus();
+        input.focus().select();
         input.keyup(function(e) {
           if (e.which === 13) {
             boardObj.okEdit(target, input, boardObj);
