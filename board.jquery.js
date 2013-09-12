@@ -74,7 +74,8 @@
         rowsWrapper = this.options.rowsWrapper;
         return $('.' + rowsWrapper).sortable({
           connectWith: '.' + rowsWrapper,
-          dropOnEmpty: true
+          dropOnEmpty: true,
+          placeholder: "sortable-placeholder"
         }).disableSelection();
       },
       _setupContentsEditable: function() {

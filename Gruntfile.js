@@ -15,13 +15,16 @@ module.exports = function(grunt) {
         options: {              // Target options
             sassDir: 'sass',
             cssDir: '.',
-            environment: 'production'
+            environment: 'production',
+            require: ['sassy-buttons']
+
         }
       },
       dev: {                    // Another target
         options: {
           sassDir: 'sass',
-          cssDir: '.'
+          cssDir: '.',
+          require: ['sassy-buttons']
         }
       }
     },

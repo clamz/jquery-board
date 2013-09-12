@@ -66,7 +66,7 @@ $ ->
       $('.'+rowsWrapper).sortable(
         connectWith:      '.'+rowsWrapper
         dropOnEmpty:      true
-       
+        placeholder: "sortable-placeholder"
       ).disableSelection();
 
     # the elements with "editable" class name can be editable
