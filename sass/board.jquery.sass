@@ -7,7 +7,7 @@ ul.board-wrapper
   display: table
   margin: 0
   padding: 0
-  width: 100%
+  margin: auto
   .editable
     cursor: pointer
     color: $darkGray
@@ -23,7 +23,8 @@ ul.board-wrapper
     list-style-type: none
     &.board-column
       border: 0.1em solid $lightGray
-      display: table-cell
+      float: left
+      min-width: 400px
     div.column-title      
       padding: 0.5em
       background-color: $darkGray
