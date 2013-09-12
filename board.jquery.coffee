@@ -93,10 +93,13 @@ $ ->
       input = $('<input>',
         type: "text"
         value: targetContent
-      )
+      ).data('oldValue',targetContent)
 
       target.html(input)
       input.focus()
+      input.keyup (e) ->
+        boardObj.okEdit(target, input, boardObj) if e.which == 13
+        boardObj.cancelEdit(target, input, boardObj) if e.which == 27
       #Create ok and cancel buttons
       okButton = $('<span>',
         class: 'ok'
@@ -109,8 +112,9 @@ $ ->
       ).data('oldValue',targetContent)
 
       # add the buttons on container
-      target.append(cancelButton)
       target.append(okButton)
+      target.append(cancelButton)
+      
 
       # add the clicks events on buttons
       okButton.click(
@@ -119,7 +123,8 @@ $ ->
          input: input
         ,
         boardObj._onOkEdit
-      )
+      )      
+
       cancelButton.click(
          boardObj : boardObj,
          target: target
@@ -131,24 +136,28 @@ $ ->
     _onCancelEdit: (e) ->
       e.preventDefault()
       e.stopPropagation()
-      editableElt     = e.handleObj.data.target
-      oldValue        = $(this).data('oldValue')
+      editableElt     = e.handleObj.data.target      
       boardObj        = e.handleObj.data.boardObj
+      boardObj.cancelEdit(editableElt, $(this), boardObj)
 
+    cancelEdit: (editableElt, input, boardObj) ->
+      oldValue        = input.data('oldValue')
       editableElt.html(oldValue)
       editableElt.click(boardObj,boardObj._onEdit)
-      boardObj._trigger( "editCanceled", e, oldValue )
+      boardObj._trigger( "editCanceled", editableElt, input, boardObj, oldValue )
 
     # Called when the edit was validated
-     _onOkEdit: (e) ->
+    _onOkEdit: (e) ->
       e.preventDefault()
       e.stopPropagation()
       editableElt     = e.handleObj.data.target
       inputElt        = e.handleObj.data.input
       boardObj        = e.handleObj.data.boardObj
+      boardObj.okEdit editableElt, inputElt, boardObj
+    
+    okEdit: (editableElt, inputElt, boardObj) ->      
       newValue        = $(inputElt).val()
-
       editableElt.html(newValue)      
       editableElt.click(boardObj,boardObj._onEdit)
-      boardObj._trigger( "editValidated", e, newValue )
+      boardObj._trigger( "editValidated", editableElt, inputElt, boardObj, newValue )
       

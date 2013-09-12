@@ -97,9 +97,17 @@
         input = $('<input>', {
           type: "text",
           value: targetContent
-        });
+        }).data('oldValue', targetContent);
         target.html(input);
         input.focus();
+        input.keyup(function(e) {
+          if (e.which === 13) {
+            boardObj.okEdit(target, input, boardObj);
+          }
+          if (e.which === 27) {
+            return boardObj.cancelEdit(target, input, boardObj);
+          }
+        });
         okButton = $('<span>', {
           "class": 'ok',
           text: 'Ok'
@@ -108,8 +116,8 @@
           "class": 'cancel',
           text: 'X'
         }).data('oldValue', targetContent);
-        target.append(cancelButton);
         target.append(okButton);
+        target.append(cancelButton);
         okButton.click({
           boardObj: boardObj,
           target: target,
@@ -121,27 +129,35 @@
         }, boardObj._onCancelEdit);
       },
       _onCancelEdit: function(e) {
-        var boardObj, editableElt, oldValue;
+        var boardObj, editableElt;
         e.preventDefault();
         e.stopPropagation();
         editableElt = e.handleObj.data.target;
-        oldValue = $(this).data('oldValue');
         boardObj = e.handleObj.data.boardObj;
+        return boardObj.cancelEdit(editableElt, $(this), boardObj);
+      },
+      cancelEdit: function(editableElt, input, boardObj) {
+        var oldValue;
+        oldValue = input.data('oldValue');
         editableElt.html(oldValue);
         editableElt.click(boardObj, boardObj._onEdit);
-        return boardObj._trigger("editCanceled", e, oldValue);
+        return boardObj._trigger("editCanceled", editableElt, input, boardObj, oldValue);
       },
       _onOkEdit: function(e) {
-        var boardObj, editableElt, inputElt, newValue;
+        var boardObj, editableElt, inputElt;
         e.preventDefault();
         e.stopPropagation();
         editableElt = e.handleObj.data.target;
         inputElt = e.handleObj.data.input;
         boardObj = e.handleObj.data.boardObj;
+        return boardObj.okEdit(editableElt, inputElt, boardObj);
+      },
+      okEdit: function(editableElt, inputElt, boardObj) {
+        var newValue;
         newValue = $(inputElt).val();
         editableElt.html(newValue);
         editableElt.click(boardObj, boardObj._onEdit);
-        return boardObj._trigger("editValidated", e, newValue);
+        return boardObj._trigger("editValidated", editableElt, inputElt, boardObj, newValue);
       }
     });
   });
