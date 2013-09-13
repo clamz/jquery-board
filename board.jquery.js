@@ -109,14 +109,13 @@
         var _this;
         _this = this;
         return $('.' + this.addRowClass).click(function(e) {
-          var element, json, result, template;
+          var json, newElt, result, rowWrapper, template;
           template = Handlebars.compile($("#" + _this.options.cellTemplateId).html());
-          json = {
-            name: "new line"
-          };
+          json = {};
           result = template(json);
-          element = $(this).parent().parent().find('ul:first');
-          return element.append(result);
+          rowWrapper = $(this).parent().parent().find('ul:first');
+          newElt = $(result).appendTo(rowWrapper);
+          return $(newElt).find('.editable').click();
         });
       },
       _onEdit: function(e) {

@@ -92,12 +92,13 @@ $ ->
       _this = this
       $('.'+@addRowClass).click (e) ->
         template = Handlebars.compile $("#"+_this.options.cellTemplateId).html();
-        json = {
-            name: "new line"
-        }
+        json = { }
         result  = template json
-        element = $(this).parent().parent().find('ul:first')
-        element.append result
+        rowWrapper = $(this).parent().parent().find('ul:first')
+
+        # add the new line on row wrapper
+        newElt  = $(result).appendTo rowWrapper
+        $(newElt).find('.editable').click()
 
     # on edit element editable
     # replace the text by an input text
