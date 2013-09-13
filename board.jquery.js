@@ -153,9 +153,10 @@
         });
       },
       _setupRemoveRow: function() {
-        var _this;
+        var rowsWrapper, _this;
         _this = this;
-        return $('.' + this.removeRowClass).click(function(e) {
+        rowsWrapper = this.options.rowsWrapper;
+        return $('.' + rowsWrapper).on('click', '.' + this.removeRowClass, function(e) {
           return $(this).parent().remove();
         });
       },

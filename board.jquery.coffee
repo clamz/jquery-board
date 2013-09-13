@@ -110,7 +110,7 @@ $ ->
 
     _setupAddRow: ->
       _this = this
-      $('.'+@addRowClass).click (e) ->
+      $('.'+@options.columnsClass).on('click', '.'+@addRowClass, (e) ->
         template = Handlebars.compile $("#"+_this.options.cellTemplateId).html();
         json = { }
         result  = template json
@@ -122,7 +122,8 @@ $ ->
 
     _setupRemoveRow: ->
       _this = this
-      $('.'+@removeRowClass).click (e) ->
+      rowsWrapper = @options.rowsWrapper
+      $('.'+rowsWrapper).on 'click', '.'+@removeRowClass,(e) ->
         $(this).parent().remove()
 
     _setupRemoveColumn: ->
