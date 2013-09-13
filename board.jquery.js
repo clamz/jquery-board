@@ -103,7 +103,7 @@
         var editableClass, editableElt;
         editableClass = this.options.editableClass;
         editableElt = $('.' + editableClass);
-        return editableElt.click(this, this._onEdit);
+        return $('.' + this.options.columnsClass).on('click', '.' + editableClass, this, this._onEdit);
       },
       _setupAddRow: function() {
         var _this;

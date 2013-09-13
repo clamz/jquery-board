@@ -85,7 +85,7 @@ $ ->
     _setupContentsEditable: ->
       editableClass = @options.editableClass
       editableElt   = $('.'+editableClass)
-      editableElt.click(this,@_onEdit)
+      $('.'+@options.columnsClass).on('click','.'+editableClass, this,@_onEdit)
 
 
     _setupAddRow: ->
