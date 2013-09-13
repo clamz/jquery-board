@@ -42,10 +42,13 @@
           ]
         }
       },
+      addRowClass: 'add-row',
       _create: function() {
+        this._registerHelpers();
         this._compileTemplate();
         this._setupDnd();
-        return this._setupContentsEditable();
+        this._setupContentsEditable();
+        return this._setupAddRow();
       },
       _compileTemplate: function() {
         var element, json, result, template, templateColumnsId;
@@ -69,6 +72,24 @@
         Handlebars.registerPartial("cell", $("#" + cellTemplateId).html());
         return Handlebars.registerPartial("columns", $("#" + templateColumnsId).html());
       },
+      _registerHelpers: function() {
+        var _this = this;
+        return Handlebars.registerHelper('addRow', function(options) {
+          var attrs, key, result, value;
+          attrs = (function() {
+            var _ref, _results;
+            _ref = options.hash;
+            _results = [];
+            for (key in _ref) {
+              value = _ref[key];
+              _results.push("" + key + "=\"" + value + "\"");
+            }
+            return _results;
+          })();
+          result = '<span class="' + _this.addRowClass + '" ' + attrs.join(' ') + '>+</span>';
+          return new Handlebars.SafeString(result);
+        });
+      },
       _setupDnd: function() {
         var rowsWrapper;
         rowsWrapper = this.options.rowsWrapper;
@@ -83,6 +104,20 @@
         editableClass = this.options.editableClass;
         editableElt = $('.' + editableClass);
         return editableElt.click(this, this._onEdit);
+      },
+      _setupAddRow: function() {
+        var _this;
+        _this = this;
+        return $('.' + this.addRowClass).click(function(e) {
+          var element, json, result, template;
+          template = Handlebars.compile($("#" + _this.options.cellTemplateId).html());
+          json = {
+            name: "new line"
+          };
+          result = template(json);
+          element = $(this).parent().parent().find('ul:first');
+          return element.append(result);
+        });
       },
       _onEdit: function(e) {
         var boardObj, cancelButton, editableClass, input, okButton, target, targetContent;

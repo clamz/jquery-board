@@ -13,6 +13,11 @@ ul.board-wrapper
   margin: 0
   padding: 0
   margin: auto
+  .add-row
+    @include sassy-button("flat", 0.2em, 0.7em, #1B87E0, #1B87E0)
+    @include sassy-button-structure(0.2em, 0.7em, 0.5em)
+    float: right
+    font-weight: bold
   .editable
     cursor: pointer
     color: $darkGray
@@ -31,12 +36,14 @@ ul.board-wrapper
       border: 0.1em solid $lightGray
       float: left
       min-width: 400px
-    div.column-title      
+    div.column-title
       padding: 0.5em
       background-color: $darkGray
       color: $s-lightGray
       font-weight: bold
       text-align: center
+      .editable
+        color: $s-lightGray
     ul
       &.rows-wrapper
         min-height: 250px

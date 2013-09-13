@@ -30,10 +30,13 @@ $ ->
             name: "row2-3"
           ]
         ]
+    addRowClass: 'add-row'
     _create: ->
+      @_registerHelpers()
       @_compileTemplate()
       @_setupDnd()
       @_setupContentsEditable()
+      @_setupAddRow()
 
     # compile template
     # and display the result
@@ -59,7 +62,16 @@ $ ->
       Handlebars.compile $("#"+cellTemplateId).html();
       Handlebars.registerPartial "cell", $("#"+cellTemplateId).html();
       Handlebars.registerPartial("columns", $("#"+templateColumnsId).html());
-    
+
+    _registerHelpers: ->
+      Handlebars.registerHelper('addRow', (options) =>
+        attrs = for key, value of options.hash
+                     "#{key}=\"#{value}\""
+        result = '<span class="'+@addRowClass+'" '+attrs.join(' ')+'>+</span>'
+
+        new Handlebars.SafeString(result)
+      )
+
     # setup the drag and drop feature on rows
     _setupDnd: ->
       rowsWrapper = @options.rowsWrapper
@@ -73,7 +85,19 @@ $ ->
     _setupContentsEditable: ->
       editableClass = @options.editableClass
       editableElt   = $('.'+editableClass)
-      editableElt.click(this,@_onEdit)        
+      editableElt.click(this,@_onEdit)
+
+
+    _setupAddRow: ->
+      _this = this
+      $('.'+@addRowClass).click (e) ->
+        template = Handlebars.compile $("#"+_this.options.cellTemplateId).html();
+        json = {
+            name: "new line"
+        }
+        result  = template json
+        element = $(this).parent().parent().find('ul:first')
+        element.append result
 
     # on edit element editable
     # replace the text by an input text
@@ -87,8 +111,8 @@ $ ->
       target.removeClass('editable')
       # remove the click event
       target.off('click')
-      
-      # set 
+
+      # set
       targetContent   = target.html()
       input = $('<input>',
         type: "text"
@@ -114,7 +138,7 @@ $ ->
       # add the buttons on container
       target.append(okButton)
       target.append(cancelButton)
-      
+
 
       # add the clicks events on buttons
       okButton.click(
@@ -123,7 +147,7 @@ $ ->
          input: input
         ,
         boardObj._onOkEdit
-      )      
+      )
 
       cancelButton.click(
          boardObj : boardObj,
@@ -136,7 +160,7 @@ $ ->
     _onCancelEdit: (e) ->
       e.preventDefault()
       e.stopPropagation()
-      editableElt     = e.handleObj.data.target      
+      editableElt     = e.handleObj.data.target
       boardObj        = e.handleObj.data.boardObj
       boardObj.cancelEdit(editableElt, $(this), boardObj)
 
@@ -155,11 +179,10 @@ $ ->
       inputElt        = e.handleObj.data.input
       boardObj        = e.handleObj.data.boardObj
       boardObj.okEdit editableElt, inputElt, boardObj
-    
-    okEdit: (editableElt, inputElt, boardObj) ->      
+
+    okEdit: (editableElt, inputElt, boardObj) ->
       newValue        = $(inputElt).val()
-      editableElt.html(newValue)      
+      editableElt.html(newValue)
       editableElt.click(boardObj,boardObj._onEdit)
       editableElt.addClass('editable')
       boardObj._trigger( "editValidated", editableElt, inputElt, boardObj, newValue )
-      

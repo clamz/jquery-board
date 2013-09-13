@@ -11,12 +11,12 @@
 
 </div>
 <script id="cell-template" type="text/x-handlebars-template">
-  	<span class="editable">{{name}}</span>
+  	<li class="board-row"><span class="editable">{{name}}</span></li>
 </script>
 <script id="rows-template" type="text/x-handlebars-template">
   	<ul class="rows-wrapper">
 		{{#each rows }}
-			<li class="board-row">{{> cell}}</li>
+			{{> cell}}
 		{{/each}}
 	</ul>
 </script>
@@ -24,7 +24,7 @@
   <ul class="board-wrapper">
   	{{#each columns }}
   		<li class="board-column">
-  			<div class="column-title editable">{{name}}</div>
+  			<div class="column-title"><span class="editable">{{name}}</span>{{#unless columns}}{{{addRow title="Ajouter une ligne" data-containment="parent" data-target="rows-wrapper"}}}{{/unless}}</div>
 			{{#if columns}}
 				{{> columns}}
 			{{/if}}
