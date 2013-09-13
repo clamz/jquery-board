@@ -24,7 +24,7 @@
   <ul class="board-wrapper">
   	{{#each columns }}
   		<li class="board-column">
-  			<div class="column-title"><span class="editable">{{name}}</span>{{#unless columns}}{{{addRow title="Ajouter une ligne" data-containment="parent" data-target="rows-wrapper"}}}{{/unless}}</div>
+  			<div class="column-title"><span class="editable">{{name}}</span>{{removeColumn title="Supprimer la colonne"}}{{#unless columns}}{{{addRow title="Ajouter une ligne" data-containment="parent" data-target="rows-wrapper"}}}{{/unless}}</div>
 			{{#if columns}}
 				{{> columns}}
 			{{/if}}

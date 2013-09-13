@@ -32,6 +32,7 @@ $ ->
         ]
     addRowClass: 'add-row'
     removeRowClass: 'remove-row'
+    removeColumnClass: 'remove-column'
     _create: ->
       @_registerHelpers()
       @_compileTemplate()
@@ -39,6 +40,7 @@ $ ->
       @_setupContentsEditable()
       @_setupAddRow()
       @_setupRemoveRow()
+      @_setupRemoveColumn()
 
     # compile template
     # and display the result
@@ -82,6 +84,14 @@ $ ->
         new Handlebars.SafeString(result)
       )
 
+      Handlebars.registerHelper('removeColumn', (options) =>
+        attrs = for key, value of options.hash
+                     "#{key}=\"#{value}\""
+        result = '<span class="'+@removeColumnClass+'" '+attrs.join(' ')+'>X</span>'
+
+        new Handlebars.SafeString(result)
+      )
+
     # setup the drag and drop feature on rows
     _setupDnd: ->
       rowsWrapper = @options.rowsWrapper
@@ -114,6 +124,11 @@ $ ->
       _this = this
       $('.'+@removeRowClass).click (e) ->
         $(this).parent().remove()
+
+    _setupRemoveColumn: ->
+      _this = this
+      $('.'+@removeColumnClass).click (e) ->
+        $(this).parent().parent().remove()
 
     # on edit element editable
     # replace the text by an input text

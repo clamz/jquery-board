@@ -44,13 +44,15 @@
       },
       addRowClass: 'add-row',
       removeRowClass: 'remove-row',
+      removeColumnClass: 'remove-column',
       _create: function() {
         this._registerHelpers();
         this._compileTemplate();
         this._setupDnd();
         this._setupContentsEditable();
         this._setupAddRow();
-        return this._setupRemoveRow();
+        this._setupRemoveRow();
+        return this._setupRemoveColumn();
       },
       _compileTemplate: function() {
         var element, json, result, template, templateColumnsId;
@@ -91,7 +93,7 @@
           result = '<span class="' + _this.addRowClass + '" ' + attrs.join(' ') + '>+</span>';
           return new Handlebars.SafeString(result);
         });
-        return Handlebars.registerHelper('removeRow', function(options) {
+        Handlebars.registerHelper('removeRow', function(options) {
           var attrs, key, result, value;
           attrs = (function() {
             var _ref, _results;
@@ -104,6 +106,21 @@
             return _results;
           })();
           result = '<span class="' + _this.removeRowClass + '" ' + attrs.join(' ') + '>X</span>';
+          return new Handlebars.SafeString(result);
+        });
+        return Handlebars.registerHelper('removeColumn', function(options) {
+          var attrs, key, result, value;
+          attrs = (function() {
+            var _ref, _results;
+            _ref = options.hash;
+            _results = [];
+            for (key in _ref) {
+              value = _ref[key];
+              _results.push("" + key + "=\"" + value + "\"");
+            }
+            return _results;
+          })();
+          result = '<span class="' + _this.removeColumnClass + '" ' + attrs.join(' ') + '>X</span>';
           return new Handlebars.SafeString(result);
         });
       },
@@ -140,6 +157,13 @@
         _this = this;
         return $('.' + this.removeRowClass).click(function(e) {
           return $(this).parent().remove();
+        });
+      },
+      _setupRemoveColumn: function() {
+        var _this;
+        _this = this;
+        return $('.' + this.removeColumnClass).click(function(e) {
+          return $(this).parent().parent().remove();
         });
       },
       _onEdit: function(e) {

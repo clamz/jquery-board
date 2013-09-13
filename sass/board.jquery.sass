@@ -45,6 +45,12 @@ ul.board-wrapper
       text-align: center
       .editable
         color: $s-lightGray
+      span.remove-column
+        @include sassy-button("flat", 0.2em, 0.7em, red, red)
+        @include sassy-button-structure(0.2em, 0.7em, 0.5em)
+        margin: 0 0 0 0.2em
+        float: right
+        font-weight: bold
     ul
       &.rows-wrapper
         min-height: 250px
