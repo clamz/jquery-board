@@ -43,12 +43,14 @@
         }
       },
       addRowClass: 'add-row',
+      removeRowClass: 'remove-row',
       _create: function() {
         this._registerHelpers();
         this._compileTemplate();
         this._setupDnd();
         this._setupContentsEditable();
-        return this._setupAddRow();
+        this._setupAddRow();
+        return this._setupRemoveRow();
       },
       _compileTemplate: function() {
         var element, json, result, template, templateColumnsId;
@@ -74,7 +76,7 @@
       },
       _registerHelpers: function() {
         var _this = this;
-        return Handlebars.registerHelper('addRow', function(options) {
+        Handlebars.registerHelper('addRow', function(options) {
           var attrs, key, result, value;
           attrs = (function() {
             var _ref, _results;
@@ -87,6 +89,21 @@
             return _results;
           })();
           result = '<span class="' + _this.addRowClass + '" ' + attrs.join(' ') + '>+</span>';
+          return new Handlebars.SafeString(result);
+        });
+        return Handlebars.registerHelper('removeRow', function(options) {
+          var attrs, key, result, value;
+          attrs = (function() {
+            var _ref, _results;
+            _ref = options.hash;
+            _results = [];
+            for (key in _ref) {
+              value = _ref[key];
+              _results.push("" + key + "=\"" + value + "\"");
+            }
+            return _results;
+          })();
+          result = '<span class="' + _this.removeRowClass + '" ' + attrs.join(' ') + '>X</span>';
           return new Handlebars.SafeString(result);
         });
       },
@@ -116,6 +133,13 @@
           rowWrapper = $(this).parent().parent().find('ul:first');
           newElt = $(result).appendTo(rowWrapper);
           return $(newElt).find('.editable').click();
+        });
+      },
+      _setupRemoveRow: function() {
+        var _this;
+        _this = this;
+        return $('.' + this.removeRowClass).click(function(e) {
+          return $(this).parent().remove();
         });
       },
       _onEdit: function(e) {
