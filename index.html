@@ -20,24 +20,30 @@
 		{{/each}}
 	</ul>
 </script>
+<script id="column-template" type="text/x-handlebars-template">  
+  	
+	<li class="board-column">
+		<div class="column-title"><span class="editable">{{name}}</span>{{removeColumn title="Supprimer la colonne"}}{{#unless columns}}{{{addRow title="Ajouter une ligne" data-containment="parent" data-target="rows-wrapper"}}}{{/unless}}</div>
+		{{#if columns}}
+			{{> columns}}
+		{{/if}}
+		{{#if rows}}
+			{{> rows}}
+		{{/if}}
+		{{#unless rows }}
+			{{#unless columns }}
+				<ul class="rows-wrapper">
+				</ul>
+			{{/unless}}
+		{{/unless}}
+	</li>
+</script>
+
 <script id="columns-template" type="text/x-handlebars-template">
+  {{addColumn}}
   <ul class="board-wrapper">
   	{{#each columns }}
-  		<li class="board-column">
-  			<div class="column-title"><span class="editable">{{name}}</span>{{removeColumn title="Supprimer la colonne"}}{{#unless columns}}{{{addRow title="Ajouter une ligne" data-containment="parent" data-target="rows-wrapper"}}}{{/unless}}</div>
-			{{#if columns}}
-				{{> columns}}
-			{{/if}}
-			{{#if rows}}
-				{{> rows}}
-			{{/if}}
-			{{#unless rows }}
-				{{#unless columns }}
-					<ul class="rows-wrapper">
-					</ul>
-				{{/unless}}
-			{{/unless}}
-		</li>
+  		{{> column}}
   	{{/each}}
   </ul>
 </script>

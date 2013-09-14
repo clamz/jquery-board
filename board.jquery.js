@@ -6,8 +6,10 @@
         columnsClass: 'board-column',
         rowsClass: 'board-row',
         rowsWrapper: 'rows-wrapper',
+        boardWrapper: 'board-wrapper',
         editableClass: 'editable',
         rowsTemplateId: 'rows-template',
+        columnTemplateId: 'column-template',
         cellTemplateId: 'cell-template',
         json: {
           columns: [
@@ -42,14 +44,19 @@
           ]
         }
       },
+      addColumnClass: 'add-column',
       addRowClass: 'add-row',
       removeRowClass: 'remove-row',
       removeColumnClass: 'remove-column',
+      templateRows: null,
+      templateCell: null,
+      templateColumn: null,
       _create: function() {
         this._registerHelpers();
         this._compileTemplate();
         this._setupDnd();
         this._setupContentsEditable();
+        this._setupAddColumn();
         this._setupAddRow();
         this._setupRemoveRow();
         return this._setupRemoveColumn();
@@ -59,25 +66,43 @@
         element = this.element;
         templateColumnsId = this.options.templateColumnsId;
         json = this.options.json;
-        template = Handlebars.compile($("#" + templateColumnsId).html());
         this._registerPartials();
+        template = Handlebars.compile($("#" + templateColumnsId).html());
         result = template(json);
         element.html(result);
         return this._trigger("templateCompiled", element, json, result);
       },
       _registerPartials: function() {
-        var cellTemplateId, rowsTemplateId, templateColumnsId;
+        var cellTemplateId, columnTemplateId, rowsTemplateId, templateColumnsId;
         templateColumnsId = this.options.templateColumnsId;
         rowsTemplateId = this.options.rowsTemplateId;
+        columnTemplateId = this.options.columnTemplateId;
         cellTemplateId = this.options.cellTemplateId;
-        Handlebars.compile($("#" + rowsTemplateId).html());
+        this.templateRows = Handlebars.compile($("#" + rowsTemplateId).html());
         Handlebars.registerPartial("rows", $("#" + rowsTemplateId).html());
-        Handlebars.compile($("#" + cellTemplateId).html());
+        this.templateCell = Handlebars.compile($("#" + cellTemplateId).html());
         Handlebars.registerPartial("cell", $("#" + cellTemplateId).html());
-        return Handlebars.registerPartial("columns", $("#" + templateColumnsId).html());
+        Handlebars.registerPartial("columns", $("#" + templateColumnsId).html());
+        this.templateColumn = Handlebars.compile($("#" + columnTemplateId).html());
+        return Handlebars.registerPartial("column", $("#" + columnTemplateId).html());
       },
       _registerHelpers: function() {
         var _this = this;
+        Handlebars.registerHelper('addColumn', function(options) {
+          var attrs, key, result, value;
+          attrs = (function() {
+            var _ref, _results;
+            _ref = options.hash;
+            _results = [];
+            for (key in _ref) {
+              value = _ref[key];
+              _results.push("" + key + "=\"" + value + "\"");
+            }
+            return _results;
+          })();
+          result = '<span class="' + _this.addColumnClass + '" ' + attrs.join(' ') + '>+</span>';
+          return new Handlebars.SafeString(result);
+        });
         Handlebars.registerHelper('addRow', function(options) {
           var attrs, key, result, value;
           attrs = (function() {
@@ -134,16 +159,33 @@
         }).disableSelection();
       },
       _setupContentsEditable: function() {
-        var editableClass, editableElt;
+        var boardWrapper, editableClass, editableElt;
         editableClass = this.options.editableClass;
         editableElt = $('.' + editableClass);
-        return $('.' + this.options.columnsClass).on('click', '.' + editableClass, this, this._onEdit);
+        boardWrapper = this.options.boardWrapper;
+        return $('.' + boardWrapper).on('click', '.' + editableClass, this, this._onEdit);
       },
-      _setupAddRow: function() {
+      _setupAddColumn: function() {
         var _this;
         _this = this;
-        return $('.' + this.addRowClass).click(function(e) {
+        return this.element.on('click', '.' + this.addColumnClass, function(e) {
+          var container, json, newElt, result;
+          json = {
+            name: "Modifier moi"
+          };
+          result = _this.templateColumn(json);
+          container = _this.element.find('.board-wrapper:first');
+          newElt = $(result).appendTo(container);
+          return $(newElt).find('.editable').click();
+        });
+      },
+      _setupAddRow: function() {
+        var boardWrapper, _this;
+        _this = this;
+        boardWrapper = this.options.boardWrapper;
+        return $('.' + boardWrapper).on('click', '.' + this.addRowClass, function(e) {
           var json, newElt, result, rowWrapper, template;
+          e.stopPropagation();
           template = Handlebars.compile($("#" + _this.options.cellTemplateId).html());
           json = {};
           result = template(json);
@@ -153,22 +195,23 @@
         });
       },
       _setupRemoveRow: function() {
-        var rowsWrapper, _this;
+        var boardWrapper, _this;
         _this = this;
-        rowsWrapper = this.options.rowsWrapper;
-        return $('.' + rowsWrapper).on('click', '.' + this.removeRowClass, function(e) {
+        boardWrapper = this.options.boardWrapper;
+        return $('.' + boardWrapper).on('click', '.' + this.removeRowClass, function(e) {
           return $(this).parent().remove();
         });
       },
       _setupRemoveColumn: function() {
-        var _this;
+        var boardWrapper, _this;
         _this = this;
-        return $('.' + this.removeColumnClass).click(function(e) {
+        boardWrapper = this.options.boardWrapper;
+        return $('.' + boardWrapper).on('click', '.' + this.removeColumnClass, function(e) {
           return $(this).parent().parent().remove();
         });
       },
       _onEdit: function(e) {
-        var boardObj, cancelButton, editableClass, input, okButton, target, targetContent;
+        var boardObj, boardWrapper, cancelButton, editableClass, input, okButton, target, targetContent;
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
@@ -184,7 +227,8 @@
         }).data('oldValue', targetContent);
         target.html(input);
         input.focus().select();
-        input.keyup(function(e) {
+        boardWrapper = boardObj.options.boardWrapper;
+        $('.' + boardWrapper).on('keyup', input, function(e) {
           if (e.which === 13) {
             boardObj.okEdit(target, input, boardObj);
           }

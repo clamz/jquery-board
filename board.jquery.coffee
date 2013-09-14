@@ -5,8 +5,10 @@ $ ->
       columnsClass:       'board-column'
       rowsClass:          'board-row'
       rowsWrapper:        'rows-wrapper'
+      boardWrapper:        'board-wrapper'
       editableClass:      'editable'
       rowsTemplateId:     'rows-template'
+      columnTemplateId:   'column-template'
       cellTemplateId:     'cell-template'
       json: columns: [
           name: "test"
@@ -30,14 +32,19 @@ $ ->
             name: "row2-3"
           ]
         ]
+    addColumnClass: 'add-column'
     addRowClass: 'add-row'
     removeRowClass: 'remove-row'
     removeColumnClass: 'remove-column'
+    templateRows: null
+    templateCell: null
+    templateColumn: null
     _create: ->
       @_registerHelpers()
       @_compileTemplate()
       @_setupDnd()
       @_setupContentsEditable()
+      @_setupAddColumn()
       @_setupAddRow()
       @_setupRemoveRow()
       @_setupRemoveColumn()
@@ -48,8 +55,9 @@ $ ->
       element             = @element
       templateColumnsId   = @options.templateColumnsId
       json                = @options.json
-      template            = Handlebars.compile $("#"+templateColumnsId).html()
+
       @_registerPartials()
+      template            = Handlebars.compile $("#"+templateColumnsId).html()
       result              = template json
 
       # display the result
@@ -60,14 +68,24 @@ $ ->
     _registerPartials: ->
       templateColumnsId   = @options.templateColumnsId
       rowsTemplateId      = @options.rowsTemplateId
+      columnTemplateId    = @options.columnTemplateId
       cellTemplateId      = @options.cellTemplateId
-      Handlebars.compile $("#"+rowsTemplateId).html();
+      @templateRows = Handlebars.compile $("#"+rowsTemplateId).html();
       Handlebars.registerPartial "rows", $("#"+rowsTemplateId).html();
-      Handlebars.compile $("#"+cellTemplateId).html();
+      @templateCell = Handlebars.compile $("#"+cellTemplateId).html();
       Handlebars.registerPartial "cell", $("#"+cellTemplateId).html();
       Handlebars.registerPartial("columns", $("#"+templateColumnsId).html());
-
+      @templateColumn = Handlebars.compile $("#"+columnTemplateId).html();
+      Handlebars.registerPartial "column", $("#"+columnTemplateId).html();
     _registerHelpers: ->
+      Handlebars.registerHelper('addColumn', (options) =>
+        attrs = for key, value of options.hash
+                     "#{key}=\"#{value}\""
+        result = '<span class="'+@addColumnClass+'" '+attrs.join(' ')+'>+</span>'
+
+        new Handlebars.SafeString(result)
+      )
+
       Handlebars.registerHelper('addRow', (options) =>
         attrs = for key, value of options.hash
                      "#{key}=\"#{value}\""
@@ -105,13 +123,29 @@ $ ->
     _setupContentsEditable: ->
       editableClass = @options.editableClass
       editableElt   = $('.'+editableClass)
-      $('.'+@options.columnsClass).on('click','.'+editableClass, this,@_onEdit)
+      boardWrapper = @options.boardWrapper
+      $('.'+boardWrapper).on('click','.'+editableClass, this,@_onEdit)
 
+
+    _setupAddColumn: ->
+      _this = this
+      @element.on 'click', '.'+@addColumnClass, (e) ->
+        json = { 
+            name: "Modifier moi"
+        }
+        result  = _this.templateColumn json
+        container = _this.element.find('.board-wrapper:first')
+
+        # add the new line on row wrapper
+        newElt = $(result).appendTo container
+        $(newElt).find('.editable').click()
 
     _setupAddRow: ->
       _this = this
-      $('.'+@options.columnsClass).on('click', '.'+@addRowClass, (e) ->
-        template = Handlebars.compile $("#"+_this.options.cellTemplateId).html();
+      boardWrapper = @options.boardWrapper
+      $('.'+boardWrapper).on 'click', '.'+@addRowClass, (e) ->
+        e.stopPropagation()
+        template = Handlebars.compile $("#"+_this.options.cellTemplateId).html()
         json = { }
         result  = template json
         rowWrapper = $(this).parent().parent().find('ul:first')
@@ -122,13 +156,14 @@ $ ->
 
     _setupRemoveRow: ->
       _this = this
-      rowsWrapper = @options.rowsWrapper
-      $('.'+rowsWrapper).on 'click', '.'+@removeRowClass,(e) ->
+      boardWrapper = @options.boardWrapper
+      $('.'+boardWrapper).on 'click', '.'+@removeRowClass,(e) ->
         $(this).parent().remove()
 
     _setupRemoveColumn: ->
       _this = this
-      $('.'+@removeColumnClass).click (e) ->
+      boardWrapper = @options.boardWrapper
+      $('.'+boardWrapper).on 'click', '.'+@removeColumnClass, (e) ->
         $(this).parent().parent().remove()
 
     # on edit element editable
@@ -153,7 +188,9 @@ $ ->
 
       target.html(input)
       input.focus().select()
-      input.keyup (e) ->
+
+      boardWrapper = boardObj.options.boardWrapper
+      $('.'+boardWrapper).on 'keyup', input, (e) ->
         boardObj.okEdit(target, input, boardObj) if e.which == 13
         boardObj.cancelEdit(target, input, boardObj) if e.which == 27
       #Create ok and cancel buttons
