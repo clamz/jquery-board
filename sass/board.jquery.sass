@@ -73,3 +73,27 @@ ul.board-wrapper
   height: 35px
   border: 0.2em dashed darken(#AFFA93, 20%)
   margin: 0.2em
+
+.confirm-dialog
+  position: absolute
+  top: 40%
+  left: 40%
+  background-color: $x-lightGray
+  padding: 0.5em
+  border: 0.1em lightGray solid
+  .dialog-title, .dialog-footer, .dialog-body
+    padding: 0.5em 0
+  .dialog-title
+    font-size: 1.2em
+    border-bottom: 0.1em solid $lightGray
+    text-align: center
+    padding: 0 0 0.2em
+  .dialog-footer
+    border-top: 0.1em solid $lightGray
+    .dialog-buttons-container
+      float: right
+      .dialog-ok-button, .dialog-cancel-button
+        @include sassy-button("flat", 0.2em, 0.7em, green, green)
+        margin: 0 0.1em 0 0
+      .dialog-cancel-button
+        @include sassy-button("flat", 0.2em, 0.7em, red, red)

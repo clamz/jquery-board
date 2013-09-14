@@ -150,11 +150,18 @@
         });
       },
       _setupDnd: function() {
-        var rowsWrapper;
+        var boardWrapper, rowsWrapper;
         rowsWrapper = this.options.rowsWrapper;
-        return $('.' + rowsWrapper).sortable({
+        boardWrapper = this.options.boardWrapper;
+        $('.' + rowsWrapper).sortable({
           connectWith: '.' + rowsWrapper,
           dropOnEmpty: true,
+          placeholder: "sortable-placeholder"
+        }).disableSelection();
+        return $('.' + boardWrapper).sortable({
+          connectWith: '.' + boardWrapper,
+          dropOnEmpty: true,
+          axis: 'x',
           placeholder: "sortable-placeholder"
         }).disableSelection();
       },
@@ -176,6 +183,7 @@
           result = _this.templateColumn(json);
           container = _this.element.find('.board-wrapper:first');
           newElt = $(result).appendTo(container);
+          _this._setupDnd();
           return $(newElt).find('.editable').click();
         });
       },
@@ -199,7 +207,17 @@
         _this = this;
         boardWrapper = this.options.boardWrapper;
         return $('.' + boardWrapper).on('click', '.' + this.removeRowClass, function(e) {
-          return $(this).parent().remove();
+          var row;
+          e.preventDefault();
+          e.stopPropagation();
+          row = $(this).parent();
+          return _this.confirmDialog({
+            title: 'Confirmation suppression',
+            body: 'Êtes vous sûr de vouloir supprimer ? ',
+            onOk: function() {
+              return row.remove();
+            }
+          });
         });
       },
       _setupRemoveColumn: function() {
@@ -207,7 +225,17 @@
         _this = this;
         boardWrapper = this.options.boardWrapper;
         return $('.' + boardWrapper).on('click', '.' + this.removeColumnClass, function(e) {
-          return $(this).parent().parent().remove();
+          var column;
+          e.preventDefault();
+          e.stopPropagation();
+          column = $(this).parent().parent();
+          return _this.confirmDialog({
+            title: 'Confirmation suppression',
+            body: 'Êtes vous sûr de vouloir supprimer ? ',
+            onOk: function() {
+              return column.remove();
+            }
+          });
         });
       },
       _onEdit: function(e) {
@@ -288,6 +316,51 @@
         editableElt.click(boardObj, boardObj._onEdit);
         editableElt.addClass('editable');
         return boardObj._trigger("editValidated", editableElt, inputElt, boardObj, newValue);
+      },
+      confirmDialog: function(options) {
+        var bodyContainer, buttonsContainer, cancelButton, dialogContainer, footerContainer, okButton, titleContainer;
+        dialogContainer = $('<div>', {
+          "class": "confirm-dialog"
+        });
+        titleContainer = $('<div>', {
+          "class": "dialog-title",
+          text: options.title
+        });
+        bodyContainer = $('<div>', {
+          "class": "dialog-body",
+          text: options.body
+        });
+        footerContainer = $('<div>', {
+          "class": "dialog-footer"
+        });
+        buttonsContainer = $('<div>', {
+          "class": "dialog-buttons-container"
+        });
+        okButton = $('<span>', {
+          "class": "dialog-ok-button",
+          text: "Ok"
+        });
+        cancelButton = $('<span>', {
+          "class": 'dialog-cancel-button',
+          text: 'Annuler'
+        });
+        buttonsContainer.append(okButton);
+        buttonsContainer.append(cancelButton);
+        footerContainer.append(buttonsContainer);
+        dialogContainer.append(titleContainer);
+        dialogContainer.append(bodyContainer);
+        dialogContainer.append(footerContainer);
+        dialogContainer.on('click', '.dialog-ok-button', function(e) {
+          options.onOk();
+          return dialogContainer.remove();
+        });
+        dialogContainer.on('click', '.dialog-cancel-button', function(e) {
+          if (options.cancel != null) {
+            options.onCancel;
+          }
+          return dialogContainer.remove();
+        });
+        return $('body').append(dialogContainer);
       }
     });
   });

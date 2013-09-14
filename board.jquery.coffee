@@ -113,9 +113,17 @@ $ ->
     # setup the drag and drop feature on rows
     _setupDnd: ->
       rowsWrapper = @options.rowsWrapper
+      boardWrapper = @options.boardWrapper
       $('.'+rowsWrapper).sortable(
         connectWith:      '.'+rowsWrapper
         dropOnEmpty:      true
+        placeholder: "sortable-placeholder"
+      ).disableSelection();
+
+      $('.'+boardWrapper).sortable(
+        connectWith:      '.'+boardWrapper
+        dropOnEmpty:      true
+        axis: 'x'
         placeholder: "sortable-placeholder"
       ).disableSelection();
 
@@ -138,6 +146,7 @@ $ ->
 
         # add the new line on row wrapper
         newElt = $(result).appendTo container
+        _this._setupDnd()
         $(newElt).find('.editable').click()
 
     _setupAddRow: ->
@@ -158,13 +167,25 @@ $ ->
       _this = this
       boardWrapper = @options.boardWrapper
       $('.'+boardWrapper).on 'click', '.'+@removeRowClass,(e) ->
-        $(this).parent().remove()
+        e.preventDefault()
+        e.stopPropagation()
+        row = $(this).parent()
+        _this.confirmDialog
+          title: 'Confirmation suppression'
+          body: 'Êtes vous sûr de vouloir supprimer ? '
+          onOk: -> row.remove()
 
     _setupRemoveColumn: ->
       _this = this
       boardWrapper = @options.boardWrapper
       $('.'+boardWrapper).on 'click', '.'+@removeColumnClass, (e) ->
-        $(this).parent().parent().remove()
+        e.preventDefault()
+        e.stopPropagation()
+        column = $(this).parent().parent()
+        _this.confirmDialog
+          title: 'Confirmation suppression'
+          body: 'Êtes vous sûr de vouloir supprimer ? '
+          onOk: -> column.remove()
 
     # on edit element editable
     # replace the text by an input text
@@ -255,3 +276,56 @@ $ ->
       editableElt.click(boardObj,boardObj._onEdit)
       editableElt.addClass('editable')
       boardObj._trigger( "editValidated", editableElt, inputElt, boardObj, newValue )
+
+    confirmDialog: (options) ->
+      dialogContainer = $('<div>', 
+        class: "confirm-dialog"
+      )
+
+      titleContainer = $('<div>',
+        class: "dialog-title"
+        text: options.title
+      )
+
+      bodyContainer = $('<div>',
+        class: "dialog-body"
+        text: options.body
+      )
+
+      footerContainer = $('<div>',
+        class: "dialog-footer"
+      )
+
+      buttonsContainer = $('<div>',
+        class: "dialog-buttons-container"
+      )
+
+      okButton = $('<span>',
+        class: "dialog-ok-button"
+        text: "Ok"
+      )
+
+      cancelButton = $('<span>',
+        class: 'dialog-cancel-button'
+        text: 'Annuler'
+      )
+
+      buttonsContainer.append(okButton)
+      buttonsContainer.append(cancelButton)
+
+      footerContainer.append(buttonsContainer)
+
+      dialogContainer.append(titleContainer)
+      dialogContainer.append(bodyContainer)
+      dialogContainer.append(footerContainer)
+
+      dialogContainer.on 'click', '.dialog-ok-button', (e) ->
+        options.onOk()
+        dialogContainer.remove()
+      dialogContainer.on 'click', '.dialog-cancel-button', (e) ->
+        options.onCancel if options.cancel?
+        dialogContainer.remove()
+
+      $('body').append(dialogContainer)
+
+
